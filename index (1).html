@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cybersecurity Attendance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E6EFF6; --ink:#0B1633; --soft:#4B5B7C; --glass:rgba(255,255,255,.58); --glass2:rgba(255,255,255,.82);
+  --edge:rgba(255,255,255,.92); --line:rgba(11,22,51,.12);
+  --blue:#2B4BFF; --cyan:#10C7E6; --warn:#C73A2D; --ok:#0B7F66;
+  --liquid:linear-gradient(135deg,#2B4BFF,#10B5E6);
+  --shadow:0 24px 50px -26px rgba(30,60,140,.55);
+  --b1:#8DB2FF; --b2:#4FE3F2; --b3:#C2B3FF; --b4:#98F3D8; --blob-op:.6;
+  color-scheme:light dark;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#050B1E; --ink:#E9EFFF; --soft:#9DACD3; --glass:rgba(18,30,68,.58); --glass2:rgba(26,42,92,.8);
+    --edge:rgba(150,180,255,.22); --line:rgba(160,190,255,.16);
+    --blue:#6C86FF; --cyan:#32D6F0; --warn:#FF8A7A; --ok:#4FE0B8;
+    --shadow:0 24px 50px -26px rgba(0,0,0,.8);
+    --b1:#2B4BFF; --b2:#0AA9C9; --b3:#5B3DF0; --b4:#0E8F86; --blob-op:.55;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#050B1E; --ink:#E9EFFF; --soft:#9DACD3; --glass:rgba(18,30,68,.58); --glass2:rgba(26,42,92,.8);
+  --edge:rgba(150,180,255,.22); --line:rgba(160,190,255,.16);
+  --blue:#6C86FF; --cyan:#32D6F0; --warn:#FF8A7A; --ok:#4FE0B8;
+  --shadow:0 24px 50px -26px rgba(0,0,0,.8);
+  --b1:#2B4BFF; --b2:#0AA9C9; --b3:#5B3DF0; --b4:#0E8F86; --blob-op:.55;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+[hidden]{display:none!important}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font:400 16px/1.5 'Bricolage Grotesque',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+h1,h2,h3{font-stretch:85%;font-weight:700;letter-spacing:-.02em;line-height:1.05;margin:0}
+h1{font-size:clamp(34px,6.4vw,58px)}
+h2{font-size:clamp(26px,4vw,34px)}
+h3{font-size:20px}
+p{margin:0}
+.sr{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+
+/* liquid background */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.blobs{position:absolute;inset:0;filter:url(#goo);opacity:var(--blob-op)}
+.blobs i{position:absolute;display:block;border-radius:50%;width:46vmax;height:46vmax;will-change:transform}
+.b1{background:var(--b1);left:-14vmax;top:-12vmax;animation:d1 28s ease-in-out infinite alternate}
+.b2{background:var(--b2);right:-16vmax;top:8vmax;animation:d2 34s ease-in-out infinite alternate}
+.b3{background:var(--b3);left:10vmax;bottom:-22vmax;animation:d3 31s ease-in-out infinite alternate}
+.b4{background:var(--b4);right:-6vmax;bottom:-18vmax;width:34vmax;height:34vmax;animation:d4 26s ease-in-out infinite alternate}
+@keyframes d1{to{transform:translate(34vmax,22vmax) scale(.8)}}
+@keyframes d2{to{transform:translate(-30vmax,26vmax) scale(1.15)}}
+@keyframes d3{to{transform:translate(30vmax,-26vmax) scale(.85)}}
+@keyframes d4{to{transform:translate(-36vmax,-14vmax) scale(1.2)}}
+
+.app{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:14px 18px 40px}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px 16px;flex-wrap:wrap;padding:6px 0 22px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand svg{width:34px;height:42px;flex:none}
+.brand b{display:block;font-stretch:85%;font-size:21px;font-weight:700;letter-spacing:-.01em;line-height:1.1}
+.brand small{display:block;color:var(--soft);font-size:13px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;background:var(--glass);border:1px solid var(--edge);font-size:13px;font-weight:500;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--soft)}
+.chip.live i{background:var(--ok);animation:pulse 2s infinite}
+.chip.local i{background:#E8A21B}
+@keyframes pulse{50%{box-shadow:0 0 0 6px transparent;opacity:.6}0%{box-shadow:0 0 0 0 var(--ok)}}
+
+.nav{position:relative;display:flex;padding:5px;border-radius:999px;background:var(--glass);border:1px solid var(--edge);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:var(--shadow)}
+.nav .track{position:absolute;inset:5px;filter:url(#goo-sm);pointer-events:none}
+.ind{position:absolute;top:0;bottom:0;left:0;border-radius:999px;background:var(--liquid);width:var(--w,90px);transform:translateX(var(--x,0px))}
+.nav.on .ind{transition:transform .5s cubic-bezier(.3,1.5,.5,1),width .4s}
+.nav.on .ind2{transition-duration:.95s,.7s}
+.nav button{position:relative;z-index:1;flex:1;border:0;background:none;padding:10px 22px;border-radius:999px;font-weight:600;font-size:15px;cursor:pointer;transition:color .3s;white-space:nowrap}
+.nav button[aria-selected="true"]{color:#fff}
+@media (max-width:700px){.nav{order:3;width:100%}}
+
+/* shared surfaces */
+.glass{background:var(--glass);border:1px solid var(--edge);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);box-shadow:var(--shadow)}
+.view{animation:fade .45s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+.lead{color:var(--soft);max-width:44ch}
+
+label{display:block;font-weight:600;font-size:14px;margin:16px 0 6px}
+input,select{width:100%;padding:13px 16px;border-radius:18px;border:1px solid var(--line);background:var(--glass2);font-size:16px;outline:none;transition:box-shadow .25s,border-color .25s}
+input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px color-mix(in srgb,var(--blue) 25%,transparent)}
+.hint{font-size:13px;color:var(--soft);margin-top:6px}
+
+.btn{position:relative;overflow:hidden;isolation:isolate;border:0;border-radius:999px;padding:14px 28px;font-weight:600;font-size:16px;color:#fff;background:var(--liquid);cursor:pointer;box-shadow:0 14px 28px -14px var(--blue);transition:transform .2s}
+.btn::before{content:"";position:absolute;z-index:-1;left:var(--x,50%);top:var(--y,50%);width:0;height:0;border-radius:50%;background:rgba(255,255,255,.3);transform:translate(-50%,-50%);transition:width .6s ease,height .6s ease}
+.btn:hover::before{width:460px;height:460px}
+.btn:active{transform:scale(.97)}
+.btn[disabled]{opacity:.65;cursor:progress}
+.btn.ghost{background:var(--glass2);color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn.ghost::before{background:color-mix(in srgb,var(--blue) 14%,transparent)}
+.btn.small{padding:9px 18px;font-size:14px}
+.msg{min-height:24px;margin-top:14px;font-size:15px;font-weight:500}
+.msg.warn{color:var(--warn)}
+.msg.ok{color:var(--ok)}
+.msg button{margin-left:8px;border:0;background:none;padding:0;font-weight:700;text-decoration:underline;cursor:pointer;color:inherit}
+
+/* check-in hero */
+.hero{display:grid;grid-template-columns:minmax(260px,.9fr) 1.1fr;align-items:center;gap:20px 44px;padding:34px 44px;border-radius:56px 56px 56px 150px}
+.stage{display:flex;justify-content:center}
+.gauge{position:relative;width:min(100%,300px);aspect-ratio:1}
+.gauge svg{width:100%;height:100%;display:block;overflow:visible}
+.g-rim{fill:url(#gbg)}
+.g-wave{fill:url(#gfill)}
+.g-w2{opacity:.55;animation:wv 9s linear infinite reverse}
+.g-w1{animation:wv 6s linear infinite}
+@keyframes wv{to{transform:translateX(-240px)}}
+#gwaves{transform:translateY(var(--ly,255px));transition:transform 1.8s cubic-bezier(.25,1.25,.4,1)}
+.g-bub{fill:#fff;opacity:0;animation:rise 7s ease-in infinite}
+@keyframes rise{0%{transform:translateY(0);opacity:0}15%{opacity:.55}100%{transform:translateY(-300px);opacity:0}}
+.g-gloss{fill:url(#ggloss);pointer-events:none}
+.g-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;text-shadow:0 2px 14px rgba(5,15,60,.55);pointer-events:none}
+.g-txt b{font-stretch:80%;font-weight:800;font-size:clamp(64px,13vw,92px);line-height:.95;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.g-txt span{font-weight:600;font-size:16px}
+.g-txt small{font-size:13px;opacity:.9}
+.panel{min-width:0}
+.panel h1{margin-bottom:12px}
+.panel .btn{margin-top:22px;width:100%}
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr;padding:26px 22px 28px;border-radius:38px 38px 38px 80px}
+  .gauge{width:min(76vw,250px)}
+}
+
+.result{display:flex;align-items:center;gap:22px;margin-top:20px;padding:20px 26px;border-radius:999px 999px 999px 999px;animation:fade .5s ease both}
+.blob{display:block;object-fit:cover;background:var(--liquid);animation:morph 9s ease-in-out infinite}
+@keyframes morph{0%,100%{border-radius:58% 42% 47% 53%/52% 55% 45% 48%}50%{border-radius:44% 56% 56% 44%/46% 42% 58% 54%}}
+.result .blob{width:84px;height:84px;flex:none;animation:morph 9s ease-in-out infinite,pop .9s cubic-bezier(.2,1.7,.4,1) both}
+@keyframes pop{from{transform:scale(.2)}}
+.result h2{font-size:28px}
+.result p{color:var(--soft)}
+@media (max-width:560px){.result{border-radius:44px;padding:18px 20px;gap:16px}.result .blob{width:68px;height:68px}}
+
+.in-today{margin-top:34px}
+.in-today h2{margin-bottom:14px}
+.bubbles{display:flex;flex-wrap:wrap;gap:16px 14px}
+.bub{display:flex;flex-direction:column;align-items:center;gap:6px;width:68px;animation:bob 5.5s ease-in-out infinite;animation-delay:calc(var(--i)*-.8s)}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.bub .ph{width:56px;height:56px;border:2px solid var(--glass2);box-shadow:0 10px 20px -10px var(--blue)}
+.bub span.n{font-size:12px;color:var(--soft);max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.empty{color:var(--soft);padding:6px 0}
+
+.ph{border-radius:50%;object-fit:cover;display:block;flex:none}
+.noimg{display:flex;align-items:center;justify-content:center;background:var(--liquid);color:#fff;font-weight:700}
+
+/* register */
+.reg{display:grid;grid-template-columns:minmax(240px,.8fr) 1.2fr;gap:20px 48px;padding:36px 44px;border-radius:56px 150px 56px 56px;align-items:start}
+.reg h2{margin-bottom:12px}
+.pick{display:flex;flex-direction:column;align-items:center;gap:18px;margin-top:24px}
+.prev{width:190px;height:190px;border-radius:58% 42% 47% 53%/52% 55% 45% 48%;background:var(--glass2);border:2px dashed var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;animation:morph 9s ease-in-out infinite}
+.prev img{width:100%;height:100%;object-fit:cover}
+.prev svg{width:84px;height:84px;color:var(--soft);opacity:.7}
+.pick-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.pick-btns label{margin:0;cursor:pointer}
+.pick-btns label:focus-within{outline:3px solid var(--blue);outline-offset:3px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+#reg-form .btn{margin-top:24px;width:100%}
+@media (max-width:820px){
+  .reg{grid-template-columns:1fr;padding:26px 22px 28px;border-radius:38px 80px 38px 38px}
+  .row2{grid-template-columns:1fr}
+}
+
+/* records */
+.rec-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}
+.seg{display:flex;gap:6px;padding:5px;border-radius:999px;background:var(--glass);border:1px solid var(--edge);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.seg button{border:0;background:none;padding:9px 20px;border-radius:999px;font-weight:600;font-size:15px;cursor:pointer;transition:background .3s,color .3s}
+.seg button[aria-pressed="true"]{background:var(--liquid);color:#fff}
+.chartbox{padding:24px 26px 18px;border-radius:40px}
+.chartbox h3{margin-bottom:4px}
+.chartbox .sub{color:var(--soft);font-size:14px;margin-bottom:12px}
+.chart{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:thin}
+.bar{flex:1 0 34px;display:flex;flex-direction:column;align-items:center;gap:8px;border:0;background:none;padding:0;cursor:pointer;min-width:34px}
+.col{height:156px;width:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px}
+.val{font-weight:700;font-size:14px;font-variant-numeric:tabular-nums;height:20px}
+.fill{display:block;width:62%;max-width:36px;height:6px;border-radius:999px;background:var(--liquid);transition:height 1.1s cubic-bezier(.2,1.35,.4,1);transition-delay:calc(var(--i)*45ms)}
+.fill.zero{opacity:.3}
+.chart.go .fill{height:var(--h)}
+.bar[aria-pressed="true"] .fill{box-shadow:0 0 0 3px var(--glass2),0 10px 24px -6px var(--blue)}
+.lab{font-size:12px;line-height:1.25;color:var(--soft);text-align:center}
+.lab b{font-size:15px;color:var(--ink)}
+.bar[aria-pressed="true"] .lab{color:var(--ink);font-weight:600}
+.list-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin:28px 0 12px}
+.list-head p{color:var(--soft)}
+.rows{display:flex;flex-direction:column;gap:8px}
+.rowi{display:flex;align-items:center;gap:14px;padding:10px 18px 10px 10px;border-radius:999px;background:var(--glass);border:1px solid var(--edge)}
+.rowi .ph{width:46px;height:46px}
+.rowi .who{flex:1;min-width:0}
+.rowi .who b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rowi .who small{color:var(--soft);font-size:13px}
+.rowi .t{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.dots{display:flex;gap:4px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--liquid)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:14px}
+.tile{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:22px 14px 16px;border-radius:34px 34px 34px 70px;background:var(--glass);border:1px solid var(--edge)}
+.tile .blob{width:86px;height:86px;margin-bottom:8px}
+.tile b{font-weight:600;line-height:1.2}
+.tile small{color:var(--soft);font-size:13px}
+.tile .rm{margin-top:8px;border:0;background:none;color:var(--warn);font-weight:600;font-size:13px;cursor:pointer;padding:4px 8px}
+.search{max-width:360px;margin-bottom:18px}
+.foot{margin-top:40px;color:var(--soft);font-size:13px}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="16" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8" result="g"/><feBlend in="SourceGraphic" in2="g"/></filter>
+    <filter id="goo-sm" x="-10%" y="-40%" width="120%" height="180%"><feGaussianBlur in="SourceGraphic" stdDeviation="7" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="g"/><feBlend in="SourceGraphic" in2="g"/></filter>
+  </defs>
+</svg>
+<div class="bg" aria-hidden="true"><div class="blobs"><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="b4"></i></div></div>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 34 42" aria-hidden="true"><defs><linearGradient id="dg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B5E6"/><stop offset="1" stop-color="#2B4BFF"/></linearGradient></defs><path d="M17 1C17 1 3 17 3 27a14 14 0 0 0 28 0C31 17 17 1 17 1Z" fill="url(#dg)"/><path d="M10 27a7 7 0 0 0 5 6.7" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <div><b>Attendance</b><small>Department of Cybersecurity</small></div>
+    </div>
+    <nav class="nav" id="nav" aria-label="Sections">
+      <div class="track" aria-hidden="true"><i class="ind"></i><i class="ind ind2"></i></div>
+      <button type="button" data-v="checkin" aria-selected="true">Check in</button>
+      <button type="button" data-v="register" aria-selected="false">Register</button>
+      <button type="button" data-v="records" aria-selected="false">Records</button>
+    </nav>
+    <span class="chip" id="chip"><i></i><span>Connecting</span></span>
+  </header>
+
+  <main>
+    <section id="v-checkin" class="view">
+      <div class="hero glass">
+        <div class="stage">
+          <div class="gauge" id="gauge" role="img" aria-label="Check-ins today">
+            <svg viewBox="0 0 240 240" aria-hidden="true">
+              <defs>
+                <clipPath id="gclip"><circle cx="120" cy="120" r="114"/></clipPath>
+                <radialGradient id="gbg" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#16276B"/><stop offset="1" stop-color="#070F36"/></radialGradient>
+                <linearGradient id="gfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E8CFF"/><stop offset="1" stop-color="#1B2FD6"/></linearGradient>
+                <radialGradient id="ggloss" cx=".3" cy=".18" r=".55"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              </defs>
+              <circle class="g-rim" cx="120" cy="120" r="118"/>
+              <g clip-path="url(#gclip)">
+                <g id="gwaves">
+                  <path class="g-wave g-w2" id="gw2" d=""/>
+                  <path class="g-wave g-w1" id="gw1" d=""/>
+                  <circle class="g-bub" cx="60" cy="330" r="5" style="animation-delay:0s"/>
+                  <circle class="g-bub" cx="110" cy="340" r="3.5" style="animation-delay:2.2s"/>
+                  <circle class="g-bub" cx="160" cy="335" r="6" style="animation-delay:4.1s"/>
+                  <circle class="g-bub" cx="195" cy="345" r="4" style="animation-delay:1.3s"/>
+                  <circle class="g-bub" cx="85" cy="350" r="3" style="animation-delay:5.2s"/>
+                </g>
+              </g>
+              <circle class="g-gloss" cx="120" cy="120" r="118"/>
+            </svg>
+            <div class="g-txt"><b id="g-n">0</b><span>checked in today</span><small id="g-of"></small></div>
+          </div>
+        </div>
+        <form id="ci-form" class="panel" novalidate>
+          <h1 id="today"></h1>
+          <p class="lead">Enter your matric number and PIN to mark yourself present.</p>
+          <label for="ci-matric">Matric number</label>
+          <input id="ci-matric" autocomplete="off" autocapitalize="characters" spellcheck="false">
+          <label for="ci-pin">PIN</label>
+          <input id="ci-pin" type="password" inputmode="numeric" maxlength="4" autocomplete="off">
+          <button class="btn" id="ci-btn" type="submit">Check in</button>
+          <p id="ci-msg" class="msg" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+      <article id="ci-result" class="result glass" hidden></article>
+      <section class="in-today">
+        <h2>In today</h2>
+        <div id="recent" class="bubbles"></div>
+      </section>
+    </section>
+
+    <section id="v-register" class="view" hidden>
+      <form id="reg-form" class="reg glass" novalidate>
+        <div>
+          <h2>Create your profile</h2>
+          <p class="lead">Your photo and matric number show when you check in, so the lecturer can confirm it's you.</p>
+          <div class="pick">
+            <div class="prev" id="reg-prev">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c1-4.5 4.4-6.5 8-6.5s7 2 8 6.5"/></svg>
+            </div>
+            <div class="pick-btns">
+              <label class="btn small">Take a photo<input class="sr" type="file" id="reg-cam" accept="image/*" capture="user"></label>
+              <label class="btn small ghost">Choose from gallery<input class="sr" type="file" id="reg-file" accept="image/*"></label>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label for="reg-name" style="margin-top:0">Full name</label>
+          <input id="reg-name" autocomplete="name">
+          <div class="row2">
+            <div><label for="reg-matric">Matric number</label><input id="reg-matric" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>
+            <div><label for="reg-level">Level</label>
+              <select id="reg-level"><option>100</option><option>200</option><option>300</option><option selected>400</option><option>500</option></select></div>
+          </div>
+          <label for="reg-pin">Choose a 4-digit PIN</label>
+          <input id="reg-pin" type="password" inputmode="numeric" maxlength="4" autocomplete="off">
+          <p class="hint">You'll enter this PIN every time you check in, so nobody can check in for you.</p>
+          <button class="btn" id="reg-btn" type="submit">Create profile</button>
+          <p id="reg-msg" class="msg" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+
+    <section id="v-records" class="view" hidden>
+      <div class="rec-head">
+        <div class="seg" role="group" aria-label="Record type">
+          <button type="button" data-m="daily" aria-pressed="true">Daily</button>
+          <button type="button" data-m="weekly" aria-pressed="false">Weekly</button>
+          <button type="button" data-m="students" aria-pressed="false">Students</button>
+        </div>
+        <button type="button" class="btn small ghost" id="exp" hidden>Export CSV</button>
+      </div>
+      <div id="rec-body"></div>
+    </section>
+  </main>
+  <p class="foot" id="foot"></p>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const pad=n=>String(n).padStart(2,'0');
+const dkey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseKey=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const weekStart=d=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
+const fmt=(d,o)=>d.toLocaleDateString('en-GB',o);
+const fmtTime=ts=>new Date(ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>String(s||'').trim().toUpperCase().replace(/\s+/g,'');
+const toKey=m=>m.replace(/[^A-Z0-9_\-.~:@+]/g,'-');
+const okPhoto=p=>typeof p==='string'&&p.length<150000&&/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(p);
+const initials=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+const avatar=(s,cls)=>okPhoto(s&&s.photo)?`<img class="${cls}" src="${s.photo}" alt="">`:`<span class="${cls} noimg" aria-hidden="true">${esc(initials(s&&s.name))}</span>`;
+const first=n=>String(n||'').trim().split(/\s+/)[0]||'';
+
+async function hashPin(pin,key){
+  try{
+    const b=new TextEncoder().encode(key+':'+pin);
+    const h=await crypto.subtle.digest('SHA-256',b);
+    return [...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,'0')).join('');
+  }catch(e){let h=5381;const s=key+':'+pin;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return 'f'+h}
+}
+
+/* ---------- state ---------- */
+const state={students:new Map(),checkins:new Map(),view:'checkin',rec:'daily',
+  selDay:dkey(new Date()),selWeek:dkey(weekStart(new Date())),canWrite:true,isAdmin:false,dl:null,q:''};
+
+/* ---------- storage: shared db when available, this browser otherwise ---------- */
+const LS='cyb-attendance-v1';
+const Local={
+  load(){try{const r=JSON.parse(localStorage.getItem(LS)||'{}');return{students:r.students||{},checkins:r.checkins||{}}}catch(e){return{students:{},checkins:{}}}},
+  save(d){try{localStorage.setItem(LS,JSON.stringify(d))}catch(e){throw{code:'local_full'}}}
+};
+function pullLocal(){
+  const d=Local.load();
+  state.students=new Map(Object.entries(d.students));
+  state.checkins=new Map(Object.entries(d.checkins));
+  render();
+}
+const B={kind:'local',db:null,
+  async student(k){
+    if(this.kind==='live'){const s=await this.db.doc('students/'+k).get();return s.exists?s.data():null}
+    return Local.load().students[k]||null;
+  },
+  async checkin(id){
+    if(this.kind==='live'){const s=await this.db.doc('checkins/'+id).get();return s.exists?s.data():null}
+    return Local.load().checkins[id]||null;
+  },
+  async putStudent(k,o){
+    if(this.kind==='live'){await this.db.doc('students/'+k).set(o);return}
+    const d=Local.load();d.students[k]=o;Local.save(d);pullLocal();
+  },
+  async putCheckin(id,o){
+    if(this.kind==='live'){await this.db.doc('checkins/'+id).set(o);return}
+    const d=Local.load();d.checkins[id]=o;Local.save(d);pullLocal();
+  },
+  async delStudent(k){
+    if(this.kind==='live'){await this.db.doc('students/'+k).delete();return}
+    const d=Local.load();delete d.students[k];Local.save(d);pullLocal();
+  }
+};
+const errMsg=e=>({
+  invalid_argument:'You can view this page but not change it. Ask the department admin for Contributor access.',
+  quota_exceeded:'The record store is full. Tell the department admin.',
+  resource_exhausted:'Too many requests. Wait a moment and try again.',
+  unavailable:'Connection problem. Try again in a moment.',
+  revoked:'Your access to this page changed. Reload to continue.',
+  local_full:"This browser can't save more records."
+})[e&&e.code]||'Something went wrong. Try again.';
+
+let readyResolve;const ready=new Promise(r=>readyResolve=r);
+function setChip(kind){
+  const c=$('#chip');c.className='chip '+kind;
+  c.lastElementChild.textContent=kind==='live'?'Live and shared':kind==='local'?'This browser only':'Connecting';
+}
+async function connect(){
+  let db=null;
+  try{
+    if(window.claude&&window.claude.use){
+      db=await Promise.race([window.claude.use('db'),new Promise(r=>setTimeout(()=>r(null),9000))]);
+    }
+  }catch(e){db=null}
+  if(db){
+    B.kind='live';B.db=db;
+    state.students=new Map();state.checkins=new Map();
+    const bad=e=>{if(e&&e.code==='revoked')setChip('local')};
+    db.collection('students').onSnapshot(s=>{state.students=new Map(s.docs.map(d=>[d.id,d.data()]));render()},bad);
+    const since=dkey(addDays(new Date(),-56));
+    db.collection('checkins').where('date','>=',since).orderBy('date','desc').limit(1000)
+      .onSnapshot(s=>{state.checkins=new Map(s.docs.map(d=>[d.id,d.data()]));render()},bad);
+    try{
+      const u=await window.claude.use('user');
+      if(u){state.isAdmin=await u.canEdit();const w=await u.can('data.write');if(w===false)state.canWrite=false}
+    }catch(e){}
+    try{state.dl=await window.claude.use('downloads')}catch(e){state.dl=null}
+    setChip('live');
+  }else{
+    B.kind='local';state.isAdmin=true;setChip('local');pullLocal();
+  }
+  readyResolve();render();
+}
+
+/* ---------- derived data ---------- */
+const list=()=>[...state.checkins.values()];
+function groupByDate(){const m=new Map();for(const c of list()){if(!m.has(c.date))m.set(c.date,[]);m.get(c.date).push(c)}return m}
+const stu=c=>state.students.get(c.matric)||{name:c.name,matric:c.matric};
+
+/* ---------- liquid gauge ---------- */
+function wavePath(){let d='M0 16 Q30 -8 60 16';for(let x=120;x<=480;x+=60)d+=` T${x} 16`;return d+' V330 H0Z'}
+$('#gw1').setAttribute('d',wavePath());$('#gw2').setAttribute('d',wavePath());
+$('#gw2').style.animationDelay='-2.5s';
+function renderGauge(){
+  const today=dkey(new Date());
+  const n=(groupByDate().get(today)||[]).length, total=state.students.size;
+  const pct=total?Math.min(n/total,1):0;
+  $('#g-n').textContent=n;
+  $('#g-of').textContent=total?`of ${total} registered`:'No students registered yet';
+  $('#gauge').setAttribute('aria-label',`${n} checked in today`+(total?` of ${total} registered`:''));
+  $('#gwaves').style.setProperty('--ly',(n?(236*(1-pct)-8):255)+'px');
+}
+function renderRecent(){
+  const today=dkey(new Date());
+  const items=(groupByDate().get(today)||[]).slice().sort((a,b)=>b.ts-a.ts).slice(0,16);
+  $('#recent').innerHTML=items.length?items.map((c,i)=>{const s=stu(c);
+    return `<div class="bub" style="--i:${i}" title="${esc(s.name)}">${avatar(s,'ph')}<span class="n">${esc(first(s.name))}</span></div>`}).join('')
+    :'<p class="empty">No one has checked in yet today.</p>';
+  $$('#recent .ph').forEach(e=>e.classList.add('ph'));
+}
+function renderHead(){
+  $('#today').textContent=fmt(new Date(),{weekday:'long',day:'numeric',month:'long'});
+}
+
+/* ---------- records ---------- */
+function dayRows(k){
+  const rows=(groupByDate().get(k)||[]).slice().sort((a,b)=>a.ts-b.ts);
+  return rows.length?`<div class="rows">${rows.map(c=>{const s=stu(c);
+    return `<div class="rowi">${avatar(s,'ph')}<div class="who"><b>${esc(s.name)}</b><small>${esc(s.matric||c.matric)}</small></div><span class="t">${fmtTime(c.ts)}</span></div>`}).join('')}</div>`
+    :'<p class="empty">No check-ins on this day.</p>';
+}
+function dailyHTML(){
+  const days=[...Array(14)].map((_,i)=>dkey(addDays(new Date(),i-13)));
+  const by=groupByDate();
+  const max=Math.max(1,...days.map(k=>(by.get(k)||[]).length));
+  const bars=days.map((k,i)=>{const n=(by.get(k)||[]).length,d=parseKey(k);
+    return `<button class="bar" type="button" data-k="${k}" aria-pressed="${k===state.selDay}" aria-label="${fmt(d,{weekday:'long',day:'numeric',month:'long'})}: ${n} checked in" style="--i:${i}"><span class="col"><span class="val">${n}</span><span class="fill ${n?'':'zero'}" style="--h:${n?Math.max(Math.round(n/max*124),10):6}px"></span></span><span class="lab">${fmt(d,{weekday:'short'})}<br><b>${d.getDate()}</b></span></button>`}).join('');
+  return `<div class="chartbox glass"><h3>Students checked in each day</h3><p class="sub">Last 14 days. Tap a day to see who came.</p><div class="chart" id="chart">${bars}</div></div><div id="rec-list">${dailyList()}</div>`;
+}
+function dailyList(){
+  const k=state.selDay,n=(groupByDate().get(k)||[]).length;
+  return `<div class="list-head"><h3>${fmt(parseKey(k),{weekday:'long',day:'numeric',month:'long'})}</h3><p>${n} checked in</p></div>${dayRows(k)}`;
+}
+function weeksData(){
+  const start=weekStart(new Date()),weeks=[];
+  for(let i=7;i>=0;i--)weeks.push({k:dkey(addDays(start,-7*i)),stu:new Map(),total:0});
+  const idx=new Map(weeks.map((w,i)=>[w.k,i]));
+  for(const c of list()){
+    const d=parseKey(c.date),wk=dkey(weekStart(d)),i=idx.get(wk);if(i==null)continue;
+    const w=weeks[i];w.total++;
+    if(!w.stu.has(c.matric))w.stu.set(c.matric,{rec:c,days:new Set()});
+    w.stu.get(c.matric).days.add((d.getDay()+6)%7);
+  }
+  return weeks;
+}
+function weeklyHTML(){
+  const weeks=weeksData(),max=Math.max(1,...weeks.map(w=>w.stu.size));
+  const bars=weeks.map((w,i)=>{const n=w.stu.size,d=parseKey(w.k);
+    return `<button class="bar" type="button" data-k="${w.k}" aria-pressed="${w.k===state.selWeek}" aria-label="Week of ${fmt(d,{day:'numeric',month:'long'})}: ${n} students" style="--i:${i}"><span class="col"><span class="val">${n}</span><span class="fill ${n?'':'zero'}" style="--h:${n?Math.max(Math.round(n/max*124),10):6}px"></span></span><span class="lab">Week of<br><b>${fmt(d,{day:'numeric',month:'short'})}</b></span></button>`}).join('');
+  return `<div class="chartbox glass"><h3>Students checked in each week</h3><p class="sub">Last 8 weeks, counting each student once per week. Tap a week for the breakdown.</p><div class="chart" id="chart">${bars}</div></div><div id="rec-list">${weeklyList()}</div>`;
+}
+function weeklyList(){
+  const w=weeksData().find(x=>x.k===state.selWeek)||weeksData()[7];
+  const rows=[...w.stu.values()].map(v=>({s:stu(v.rec),days:v.days})).sort((a,b)=>b.days.size-a.days.size||String(a.s.name).localeCompare(String(b.s.name)));
+  const names=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  return `<div class="list-head"><h3>Week of ${fmt(parseKey(w.k),{weekday:'short',day:'numeric',month:'long'})}</h3><p>${w.stu.size} students, ${w.total} check-ins</p></div>`+
+    (rows.length?`<div class="rows">${rows.map(r=>`<div class="rowi">${avatar(r.s,'ph')}<div class="who"><b>${esc(r.s.name)}</b><small>${esc(r.s.matric)}</small></div><div class="dots" role="img" aria-label="Present on ${[...r.days].sort().map(i=>names[i]).join(', ')}">${names.map((n,i)=>`<i class="${r.days.has(i)?'on':''}" title="${n}"></i>`).join('')}</div><span class="t">${r.days.size} ${r.days.size===1?'day':'days'}</span></div>`).join('')}</div>`:'<p class="empty">No check-ins this week.</p>');
+}
+function studentsHTML(){
+  if(!state.students.size)return `<div class="chartbox glass"><h3>No profiles yet</h3><p class="sub">Students appear here after they register.</p><button class="btn small" type="button" data-go="register">Register a student</button></div>`;
+  return `<input class="search" id="stu-q" type="search" placeholder="Search by name or matric number" aria-label="Search students" value="${esc(state.q)}"><div class="tiles" id="stu-grid"></div>`;
+}
+function renderGrid(){
+  const g=$('#stu-grid');if(!g)return;
+  const q=state.q.trim().toLowerCase(),counts=new Map();
+  for(const c of list())counts.set(c.matric,(counts.get(c.matric)||0)+1);
+  const items=[...state.students.entries()].filter(([k,s])=>!q||String(s.name).toLowerCase().includes(q)||String(s.matric).toLowerCase().includes(q))
+    .sort((a,b)=>String(a[1].name).localeCompare(String(b[1].name)));
+  g.innerHTML=items.map(([k,s])=>`<div class="tile">${avatar(s,'blob')}<b>${esc(s.name)}</b><small>${esc(s.matric)}</small><small>${esc(s.level)} level · ${counts.get(k)||0} check-ins</small>${state.isAdmin?`<button class="rm" type="button" data-k="${esc(k)}">Remove</button>`:''}</div>`).join('')||'<p class="empty">No one matches that search.</p>';
+}
+function renderRecords(){
+  $$('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===state.rec)));
+  $('#exp').hidden=!(state.isAdmin&&state.dl&&state.checkins.size);
+  const body=$('#rec-body');
+  if(state.rec==='students'){
+    if(document.activeElement&&document.activeElement.id==='stu-q'){renderGrid();return}
+    body.innerHTML=studentsHTML();renderGrid();return;
+  }
+  body.innerHTML=state.rec==='daily'?dailyHTML():weeklyHTML();
+  const ch=$('#chart');
+  if(ch){requestAnimationFrame(()=>requestAnimationFrame(()=>ch.classList.add('go')));ch.scrollLeft=ch.scrollWidth}
+}
+function renderFoot(){
+  const live=B.kind==='live';
+  $('#foot').textContent=(live?'Records are shared with everyone who has access to this page.':'Records are saved in this browser only.')+
+    (state.canWrite?'':' You have view-only access, so you can look but not check in or register.');
+}
+function render(){
+  renderHead();renderGauge();renderRecent();renderFoot();
+  if(state.view==='records')renderRecords();
+}
+
+/* ---------- navigation ---------- */
+function moveInd(){
+  const b=$('.nav button[aria-selected="true"]');if(!b)return;
+  const x=b.offsetLeft-5,w=b.offsetWidth;
+  $$('.ind').forEach(i=>{i.style.setProperty('--x',x+'px');i.style.setProperty('--w',w+'px')});
+}
+function go(v,matric){
+  state.view=v;
+  $$('.nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v===v)));
+  ['checkin','register','records'].forEach(n=>{const s=$('#v-'+n);const show=n===v;if(show&&s.hidden){s.hidden=false;s.style.animation='none';void s.offsetWidth;s.style.animation=''}else if(!show)s.hidden=true});
+  moveInd();
+  if(v==='records')renderRecords();
+  if(matric){$('#ci-matric').value=matric}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+$('#nav').addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(b)go(b.dataset.v)});
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go)});
+window.addEventListener('resize',moveInd);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(moveInd);
+moveInd();requestAnimationFrame(()=>requestAnimationFrame(()=>$('#nav').classList.add('on')));
+
+/* liquid press effect on buttons */
+document.addEventListener('pointermove',e=>{
+  const b=e.target.closest&&e.target.closest('.btn');if(!b)return;
+  const r=b.getBoundingClientRect();b.style.setProperty('--x',(e.clientX-r.left)+'px');b.style.setProperty('--y',(e.clientY-r.top)+'px');
+});
+
+/* ---------- messages ---------- */
+function say(el,text,kind,action){
+  el.className='msg '+(kind||'');el.textContent=text;
+  if(action){const b=document.createElement('button');b.type='button';b.textContent=action.label;b.addEventListener('click',action.fn);el.appendChild(b)}
+}
+
+/* ---------- check in ---------- */
+$('#ci-form').addEventListener('submit',async ev=>{
+  ev.preventDefault();
+  const msg=$('#ci-msg'),btn=$('#ci-btn'),res=$('#ci-result');
+  const m=norm($('#ci-matric').value),pin=$('#ci-pin').value.trim();
+  res.hidden=true;
+  if(!m){say(msg,'Enter your matric number.','warn');return}
+  if(!/^\d{4}$/.test(pin)){say(msg,'Enter your 4-digit PIN.','warn');return}
+  btn.disabled=true;say(msg,'Checking…');
+  try{
+    await ready;
+    if(!state.canWrite){say(msg,'You have view-only access, so you cannot check in. Ask the department admin for Contributor access.','warn');return}
+    const key=toKey(m),s=await B.student(key);
+    if(!s){say(msg,'No student has that matric number.','warn',{label:'Register instead',fn:()=>{go('register');$('#reg-matric').value=m}});return}
+    if(s.pin!==await hashPin(pin,key)){say(msg,"That PIN doesn't match. Try again.",'warn');return}
+    const date=dkey(new Date()),id=date+'_'+key;
+    let rec=await B.checkin(id),dup=!!rec;
+    if(!rec){rec={date,matric:key,name:s.name,ts:Date.now()};await B.putCheckin(id,rec)}
+    say(msg,'');
+    res.innerHTML=`${avatar(s,'blob')}<div><h2>${dup?'Already checked in':`You're in, ${esc(first(s.name))}.`}</h2><p>${dup?`You checked in today at ${fmtTime(rec.ts)}.`:`Checked in at ${fmtTime(rec.ts)}.`}</p></div>`;
+    res.hidden=false;
+    $('#ci-pin').value='';
+    res.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }catch(e){say(msg,errMsg(e),'warn')}
+  finally{btn.disabled=false}
+});
+
+/* ---------- register ---------- */
+let photo=null;
+function pickPhoto(file){
+  if(!file)return;
+  const msg=$('#reg-msg');
+  if(!/^image\//.test(file.type)){say(msg,'Choose an image file.','warn');return}
+  const fr=new FileReader();
+  fr.onerror=()=>say(msg,"Couldn't read that photo. Try another.",'warn');
+  fr.onload=()=>{
+    const img=new Image();
+    img.onerror=()=>say(msg,"Couldn't read that photo. Try another.",'warn');
+    img.onload=()=>{
+      const S=240,s=Math.min(img.width,img.height),sx=(img.width-s)/2,sy=(img.height-s)*.2;
+      const c=document.createElement('canvas');c.width=c.height=S;
+      c.getContext('2d').drawImage(img,sx,sy,s,s,0,0,S,S);
+      photo=c.toDataURL('image/jpeg',.8);
+      $('#reg-prev').innerHTML=`<img src="${photo}" alt="Your photo">`;
+      say(msg,'');
+    };
+    img.src=fr.result;
+  };
+  fr.readAsDataURL(file);
+}
+$('#reg-cam').addEventListener('change',e=>{pickPhoto(e.target.files[0]);e.target.value=''});
+$('#reg-file').addEventListener('change',e=>{pickPhoto(e.target.files[0]);e.target.value=''});
+
+$('#reg-form').addEventListener('submit',async ev=>{
+  ev.preventDefault();
+  const msg=$('#reg-msg'),btn=$('#reg-btn');
+  const name=$('#reg-name').value.trim().replace(/\s+/g,' '),m=norm($('#reg-matric').value),pin=$('#reg-pin').value.trim(),level=$('#reg-level').value;
+  if(!photo){say(msg,'Add a photo of yourself.','warn');return}
+  if(name.length<3){say(msg,'Enter your full name.','warn');return}
+  if(m.length<4){say(msg,'Enter your matric number.','warn');return}
+  if(!/^\d{4}$/.test(pin)){say(msg,'Your PIN must be exactly 4 digits.','warn');return}
+  btn.disabled=true;say(msg,'Saving…');
+  try{
+    await ready;
+    if(!state.canWrite){say(msg,'You have view-only access, so you cannot register. Ask the department admin for Contributor access.','warn');return}
+    const key=toKey(m);
+    if(await B.student(key)){say(msg,'That matric number is already registered. Go to Check in.','warn');return}
+    await B.putStudent(key,{name,matric:m,level,photo,pin:await hashPin(pin,key),createdAt:Date.now()});
+    $('#reg-form').reset();photo=null;
+    $('#reg-prev').innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4 21c1-4.5 4.4-6.5 8-6.5s7 2 8 6.5"/></svg>`;
+    say(msg,'');
+    go('checkin',m);
+    say($('#ci-msg'),`Profile created for ${first(name)}. Enter your PIN to check in.`,'ok');
+    $('#ci-pin').focus({preventScroll:true});
+  }catch(e){say(msg,errMsg(e),'warn')}
+  finally{btn.disabled=false}
+});
+
+/* ---------- records interactions ---------- */
+$('.seg').addEventListener('click',e=>{const b=e.target.closest('button[data-m]');if(!b)return;state.rec=b.dataset.m;renderRecords()});
+$('#rec-body').addEventListener('click',e=>{
+  const bar=e.target.closest('.bar');
+  if(bar){
+    if(state.rec==='daily')state.selDay=bar.dataset.k;else state.selWeek=bar.dataset.k;
+    $$('#chart .bar').forEach(b=>b.setAttribute('aria-pressed',String(b===bar)));
+    $('#rec-list').innerHTML=state.rec==='daily'?dailyList():weeklyList();
+    return;
+  }
+  const rm=e.target.closest('.rm');
+  if(rm){
+    if(rm.dataset.armed){B.delStudent(rm.dataset.k).catch(err=>alert(errMsg(err)));return}
+    rm.dataset.armed='1';rm.textContent='Tap again to remove';
+    setTimeout(()=>{delete rm.dataset.armed;rm.textContent='Remove'},3000);
+  }
+});
+$('#rec-body').addEventListener('input',e=>{if(e.target.id==='stu-q'){state.q=e.target.value;renderGrid()}});
+
+/* CSV export. Cells starting with = + - @ get a leading quote so spreadsheets don't run them as formulas. */
+const cell=v=>{let s=String(v==null?'':v);if(/^[=+\-@\t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};
+$('#exp').addEventListener('click',async()=>{
+  const rows=[['Date','Time','Matric number','Name']];
+  list().sort((a,b)=>a.ts-b.ts).forEach(c=>{const s=stu(c);rows.push([c.date,fmtTime(c.ts),s.matric||c.matric,s.name||c.name])});
+  try{await state.dl.save({filename:`attendance-${dkey(new Date())}.csv`,data:'\ufeff'+rows.map(r=>r.map(cell).join(',')).join('\n')})}catch(e){}
+});
+
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+setChip('connecting');
+pullLocal();
+connect();
+})();
+</script>
+</body>
+</html>
